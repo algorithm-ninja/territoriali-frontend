@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, Route, RouteComponentProps } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faDownload, faUpload } from '@fortawesome/fontawesome-free-solid'
+import { faPlus, faDownload, faUpload } from '@fortawesome/free-solid-svg-icons'
 import client from './TerryClient';
 import { DateView } from './datetime.views';
 import { DateTime } from 'luxon';

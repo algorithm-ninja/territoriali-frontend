@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Link, Route, RouteComponentProps } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt } from '@fortawesome/fontawesome-free-solid';
-import { faClock } from '@fortawesome/fontawesome-free-regular';
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-regular-svg-icons';
 import * as ReactMarkdown from 'react-markdown';
 import { Trans, InjectedTranslateProps, InjectedI18nProps } from 'react-i18next';
 import TaskView from './TaskView';

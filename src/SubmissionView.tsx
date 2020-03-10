@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes, faTrash, faPaperPlane } from '@fortawesome/fontawesome-free-solid'
+import { faTimes, faTrash, faPaperPlane } from '@fortawesome/free-solid-svg-icons'
 import ValidationView from './ValidationView';
 import FileView from './FileView';
 import ModalView from './ModalView';

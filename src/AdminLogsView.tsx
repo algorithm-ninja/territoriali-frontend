@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Object } from 'core-js';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes } from '@fortawesome/fontawesome-free-solid'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import ModalView from './ModalView';
 import "./AdminLogsView.css";
 import PromiseView from './PromiseView';
@@ -10,7 +10,7 @@ import { AbsoluteDateView } from './datetime.views';
 import { DateTime } from 'luxon';
 import { AdminSession } from './admin.models';
 import ObservablePromise from './ObservablePromise';
-import { InjectedTranslateProps, InjectedI18nProps } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 
 const LOG_LEVELS: any = {
@@ -37,7 +37,7 @@ type LogItem = {
 
 type Props = {
   session: AdminSession
-} & InjectedTranslateProps & InjectedI18nProps
+}
 
 type State = {
   level: string
@@ -125,7 +125,7 @@ export default class AdminLogsView extends React.Component<Props, State> {
   }
 
   render() {
-    const { t } = this.props;
+    const [t] = useTranslation();
 
     return (
       <ModalView contentLabel={t("logs.title")} returnUrl={"/admin"}>

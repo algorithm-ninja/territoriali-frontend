@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimes, faHourglassStart } from '@fortawesome/fontawesome-free-solid'
+import { faTimes, faHourglassStart } from '@fortawesome/free-solid-svg-icons'
 import ModalView from './ModalView';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify'
