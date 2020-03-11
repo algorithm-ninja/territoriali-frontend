@@ -10,86 +10,78 @@ import AdminUsersView from "./AdminUsersView";
 import ContestExtraTimeView from "./ContestExtraTimeView";
 import DownloadResultsView from "./DownloadResultsView";
 import PromiseView from './PromiseView';
-import { InjectedTranslateProps, InjectedI18nProps } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import Pack from './Pack';
 
 type Props = {
   pack: Pack
-} & InjectedTranslateProps & InjectedI18nProps
+}
 
-export default class AdminView extends React.Component<Props> {
-  session: AdminSession;
+const AdminView = (props: Props) => {
+  const [t] = useTranslation();
 
-  constructor(props: Props) {
-    super(props)
-    this.session = new AdminSession();
-  }
+  const [session, setSession] = React.useState<AdminSession>(new AdminSession());
 
-  componentWillMount() {
-    this.session.onAppStart();
-  }
+  React.useEffect(() => {
+    session.onAppStart();
+    session.pushObserver(this);
+    
+    return () => {
+      session.popObserver(this);
+    };
+  })
 
-  componentDidMount() {
-    this.session.pushObserver(this);
-  }
-
-  componentWillUnmount() {
-    this.session.popObserver(this);
-  }
-
-  renderNavBar() {
-    const { t } = this.props;
-    return <nav className="terry-navbar">
+  const renderNavBar = () => (
+    <nav className="terry-navbar">
       <Link to="/admin" className="navbar-brand">{t("navbar.title")}</Link>
-      <button className="terry-admin-logout-button btn btn-sm btn-light" onClick={(e) => { e.preventDefault(); this.session.logout() }}>
+      <button className="terry-admin-logout-button btn btn-sm btn-light" onClick={(e) => { e.preventDefault(); session.logout() }}>
         <FontAwesomeIcon icon={faSignOutAlt} /> {t("navbar.logout")}
       </button>
     </nav>
+  );
+
+  if (!session.isLoggedIn()) {
+    return <AdminLoginView session={session} {...props} />;
   }
 
-  render() {
-    const { t } = this.props;
-    if (!this.session.isLoggedIn()) return <AdminLoginView session={this.session} {...this.props} />;
-
-    return <React.Fragment>
-      {this.renderNavBar()}
+  return (
+    <>
+      {renderNavBar()}
       <main>
-        <PromiseView promise={this.session.statusPromise}
+        <PromiseView promise={session.statusPromise}
           renderPending={() => t("loading")}
           renderRejected={() => t("error")}
           renderFulfilled={(status) =>
-            this.session.usersPromise && <PromiseView promise={this.session.usersPromise}
+            session.usersPromise && <PromiseView promise={session.usersPromise}
               renderPending={() => t("loading")}
               renderFulfilled={(users) =>
-                <React.Fragment>
+                <>
                   <AdminSummaryView
-                    {...this.props}
-                    session={this.session}
+                    {...props}
+                    session={session}
                     status={status}
                     users={users} />
 
                   <Route path="/admin/logs" render={
                     () => (
                       <AdminLogsView
-                        {...this.props}
-                        session={this.session} />
+                        {...props}
+                        session={session} />
                     )
                   } />
 
                   <Route path="/admin/extra_time" render={
                     () => (
                       <ContestExtraTimeView
-                        t={this.props.t}
                         status={status}
-                        session={this.session} />
+                        session={session} />
                     )
                   } />
 
                   <Route path="/admin/users" render={
                     () => (
                       <AdminUsersView
-                        t={this.props.t}
-                        session={this.session}
+                        session={session}
                         users={users} />
                     )
                   } />
@@ -97,17 +89,18 @@ export default class AdminView extends React.Component<Props> {
                   <Route path="/admin/download_results" render={
                     () => (
                       <DownloadResultsView
-                        t={this.props.t}
-                        session={this.session} />
+                        session={session} />
                     )
                   } />
-                </React.Fragment>
+                </>
               }
               renderRejected={() => t("error")}
             />
           }
         />
       </main>
-    </React.Fragment>
-  }
-}
+    </>
+  );
+};
+
+export default AdminView;

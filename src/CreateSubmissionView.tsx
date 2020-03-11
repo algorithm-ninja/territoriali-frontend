@@ -1,36 +1,38 @@
 import * as React from 'react';
 import SubmissionView from './SubmissionView';
-import { InjectedTranslateProps, InjectedI18nProps } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 
 type Props = {
   userState: any
   taskName: string
   inputId: string
-} & InjectedTranslateProps & InjectedI18nProps & RouteComponentProps<any>
+} & RouteComponentProps<any>;
 
-export default class CreateSubmissionView extends React.Component<Props> {
-  submission: any;
+const CreateSubmissionView = (props: Props) => {
+  const [t] = useTranslation();
+  const [submission, setSubmission] = React.useState();
 
-  constructor(props: Props) {
-    super(props);
-
-    if (this.getTaskState().canSubmit(this.props.inputId)) {
-      this.submission = this.getTaskState().createSubmission(this.props.inputId);
+  React.useEffect(() => {
+    if (getTaskState().canSubmit(props.inputId)) {
+      setSubmission(getTaskState().createSubmission(props.inputId));
     }
+  }, []);
+
+  const getTaskState = () => (
+    props.userState.getTaskState(props.taskName)
+  );
+
+  if (submission === undefined) {
+    return <p>{t("submission.cannot submit")}</p>;
   }
 
-  getTaskState() {
-    return this.props.userState.getTaskState(this.props.taskName);
-  }
+  return (
+    <SubmissionView
+      {...props}
+      submission={submission}
+    />
+  );
+};
 
-  render() {
-    const { t } = this.props;
-    if (this.submission === undefined) return <p>{t("submission.cannot submit")}</p>;
-    return (
-      <SubmissionView
-        {...this.props}
-        submission={this.submission} />
-    );
-  }
-}
+export default CreateSubmissionView;

@@ -5,13 +5,13 @@ import { faTrophy } from '@fortawesome/free-solid-svg-icons'
 import ModalView from './ModalView';
 import client from './TerryClient';
 import { AdminSession } from './admin.models';
-import { InjectedTranslateProps } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   session: AdminSession
-} & InjectedTranslateProps
+};
 
-export default class DownloadResultsView extends React.Component<Props> {
+const DownloadResultsView = (props: Props) => {
   data: any;
   loadPromise?: Promise<void>;
 

@@ -2,65 +2,60 @@ import * as React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom'
 import client from './TerryClient'
 import ContestView from './ContestView';
-import { translateComponent } from "./utils";
 import LoadingView from "./LoadingView";
 import PromiseView from './PromiseView';
 import { Model } from './user.models';
 import ObservablePromise from './ObservablePromise';
-import { InjectedTranslateProps, InjectedI18nProps } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
-type Props = InjectedTranslateProps & InjectedI18nProps & RouteComponentProps<any>
+type Props = RouteComponentProps<any>
 
-class AppView extends React.Component<Props> {
-  model: Model;
+const AppView = (props: Props) => {
+  const [t] = useTranslation();
+  const [model, useModel] = React.useState(new Model());
 
-  constructor(props: Props) {
-    super(props);
+  React.useEffect(() => {
+    model.onAppStart();
+    model.pushObserver(this);
+    
+    return () => {
+      model.popObserver(this);
+    };
+  }, [model]);
 
-    this.model = new Model();
-    this.model.onAppStart();
-  }
-
-  componentDidMount() {
-    this.model.pushObserver(this);
-  }
-
-  componentWillUnmount() {
-    this.model.popObserver(this);
-  }
-
-  render() {
-    const { t } = this.props;
-    if (this.model.isLoggedIn()) {
-      return this.model.userStatePromise && <PromiseView promise={this.model.userStatePromise}
+  if (model.isLoggedIn()) {
+    return model.userStatePromise && (
+      <PromiseView promise={model.userStatePromise}
         renderPending={() => <LoadingView />}
         renderFulfilled={(userState) => (
-          <ContestView {...this.props} model={this.model} userState={userState} />
+          <ContestView {...props} model={model} userState={userState} />
         )}
         renderRejected={(_error) => <div className="alert alert-danger" role="alert">
           <h4 className="alert-heading">{t("error")}</h4>
           <p>{t("reload")}</p>
         </div>}
-      />;
-    } else {
-      return <PromiseView promise={new ObservablePromise(client.api("/admin/pack_status"))}
-        renderPending={() => <LoadingView />}
-        renderFulfilled={(response) => {
-          if (response.data.uploaded)
-            return (
-              // <LoginView {...this.props} model={this.model} />
-              <ContestView {...this.props} model={this.model} userState={null} />
-            )
-          else
-            return <Redirect to='/admin' />
-        }}
-        renderRejected={(_error) =>
-          // <LoginView {...this.props} model={this.model} />
-          <ContestView {...this.props} model={this.model} userState={null} />
-        }
-      />;
-    }
+      />
+    );
   }
-}
 
-export default translateComponent(AppView)
+  return (
+    <PromiseView promise={new ObservablePromise(client.api("/admin/pack_status"))}
+      renderPending={() => <LoadingView />}
+      renderFulfilled={(response) => {
+        if (response.data.uploaded)
+          return (
+            // <LoginView {...props} model={model} />
+            <ContestView {...props} model={model} userState={null} />
+          )
+        else
+          return <Redirect to='/admin' />
+      }}
+      renderRejected={(_error) =>
+        // <LoginView {...props} model={model} />
+        <ContestView {...props} model={model} userState={null} />
+      }
+    />
+  );
+};
+
+export default AppView;
