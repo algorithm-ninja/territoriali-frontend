@@ -2,45 +2,45 @@ import * as React from 'react';
 import ObservablePromise from './ObservablePromise';
 
 type Props = {
-  promise: ObservablePromise
-  renderPending: () => React.ReactNode
-  renderFulfilled: (value: any) => React.ReactNode
-  renderRejected: (error: any) => React.ReactNode
-}
+  promise: ObservablePromise;
+  renderPending: () => React.ReactNode;
+  renderFulfilled: (value: any) => React.ReactNode;
+  renderRejected: (error: any) => React.ReactNode;
+};
 
-class PromiseView extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-
-    if (!props.renderFulfilled || !props.renderPending || !props.renderRejected) throw Error();
+const PromiseView = (props: Props) => {
+  // At least one handler should be provided
+  // FIXME: do we really care?
+  if (!props.renderFulfilled || !props.renderPending || !props.renderRejected) {
+    throw Error();
   }
 
   // FIXME: promise should always be present, check and fix!
 
-  componentDidMount() {
-    this.props.promise && this.props.promise.pushObserver(this);
-  }
+  React.useEffect(() => {
+    props.promise && props.promise.pushObserver(this);
+    
+    return () => {
+      props.promise && props.promise.popObserver(this);
+    };
+  }, [props.promise]);
 
-  componentWillUnmount() {
-    this.props.promise && this.props.promise.popObserver(this);
-  }
+  // FIXME: port this to hooks?
+  //
+  // componentWillReceiveProps(newProps: Props) {
+  //   if (newProps.promise !== props.promise) {
+  //     props.promise && props.promise.popObserver(this);
+  //     newProps.promise && newProps.promise.pushObserver(this);
+  //   }
+  // }
 
-  componentWillReceiveProps(newProps: Props) {
-    if (newProps.promise !== this.props.promise) {
-      this.props.promise && this.props.promise.popObserver(this);
-      newProps.promise && newProps.promise.pushObserver(this);
-    }
-  }
+  if (!props.promise) return null;
 
-  render() {
-    if (!this.props.promise) return null;
+  if (props.promise.isPending()) return props.renderPending();
+  if (props.promise.isFulfilled()) return props.renderFulfilled(props.promise.value);
+  if (props.promise.isRejected()) return props.renderRejected(props.promise.error);
 
-    if (this.props.promise.isPending()) return this.props.renderPending();
-    if (this.props.promise.isFulfilled()) return this.props.renderFulfilled(this.props.promise.value);
-    if (this.props.promise.isRejected()) return this.props.renderRejected(this.props.promise.error);
-
-    return null;
-  }
-}
+  return null;
+};
 
 export default PromiseView;

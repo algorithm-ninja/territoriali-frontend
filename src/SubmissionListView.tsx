@@ -11,29 +11,30 @@ import { colorFromScore } from "./utils";
 import "./SubmissionListView.css";
 import ScoreView from './ScoreView';
 import PromiseView from './PromiseView';
-import { InjectedTranslateProps, InjectedI18nProps } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   userState: any
   taskName: string
   model: any
-} & InjectedTranslateProps & InjectedI18nProps
+};
 
-export default class SubmissionListView extends React.Component<Props> {
-  getTask() {
-    return this.props.userState.getTask(this.props.taskName);
-  }
+const SubmissionListView = (props: Props) => {
+  const { t } = useTranslation();
 
-  getListPromise() {
-    return this.props.userState.getTaskState(this.props.taskName).submissionListPromise;
-  }
+  const getTask = () => (
+    props.userState.getTask(props.taskName)
+  );
 
-  renderSubmissionList(list: any) {
-    const { t } = this.props;
+  const getListPromise = () => (
+    props.userState.getTaskState(props.taskName).submissionListPromise
+  );
+
+  const renderSubmissionList = (list: any) => {
     const submissionList = [];
 
     for (let submission of list.items) {
-      let cut = (s: string) => s.slice(s.lastIndexOf("/") + 1);
+      const cut = (s: string) => s.slice(s.lastIndexOf("/") + 1);
       submission.input.basename = cut(submission.input.path);
       submission.output.basename = cut(submission.output.path);
       submission.source.basename = cut(submission.source.path);
@@ -42,8 +43,8 @@ export default class SubmissionListView extends React.Component<Props> {
         <tr key={submission.id}>
           <td>
             <DateView
-              {...this.props}
-              clock={() => this.props.model.serverTime()}
+              {...props}
+              clock={() => props.model.serverTime()}
               date={DateTime.fromISO(submission.date)} />
             <br />
             <Link to={"/task/" + submission.task + "/submission/" + submission.id}>
@@ -96,18 +97,17 @@ export default class SubmissionListView extends React.Component<Props> {
               </a>
             </div>
           </td>
-          <td className={"alert-" + colorFromScore(submission.score, this.getTask().data.max_score)}>
-            <ScoreView score={submission.score} max={this.getTask().data.max_score} size={1} />
+          <td className={"alert-" + colorFromScore(submission.score, getTask().data.max_score)}>
+            <ScoreView score={submission.score} max={getTask().data.max_score} size={1} />
           </td>
         </tr>
       );
     }
 
     return submissionList.reverse();
-  }
+  };
 
-  renderBody(list: any) {
-    const { t } = this.props;
+  const renderBody = (list: any) => {
     if (list.items.length === 0)
       return <div className="modal-body"><em>{t("submission.list.no submissions")}</em></div>;
 
@@ -122,38 +122,36 @@ export default class SubmissionListView extends React.Component<Props> {
             </tr>
           </thead>
           <tbody>
-            {this.renderSubmissionList(list)}
+            {renderSubmissionList(list)}
           </tbody>
         </table>
       </div>
     );
-  }
+  };
 
-  render() {
-    const taskName = this.props.taskName;
-    const { t } = this.props;
-    return (
-      <ModalView contentLabel={t("submission.list.title")} returnUrl={"/task/" + this.props.taskName}>
-        <div className="modal-header">
-          <h5 className="modal-title">
-            {t("submission.list.title")} <strong className="text-uppercase">{taskName}</strong>
-          </h5>
-          <Link to={"/task/" + this.props.taskName} role="button" className="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </Link>
-        </div>
-        <PromiseView
-          promise={this.getListPromise()}
-          renderPending={() => <div className="modal-body"><em>{t("loading")}</em></div>}
-          renderRejected={() => t("error")}
-          renderFulfilled={(list) => this.renderBody(list)}
-        />
-        <div className="modal-footer">
-          <Link to={"/task/" + this.props.taskName} role="button" className="btn btn-primary">
-            <FontAwesomeIcon icon={faTimes} /> {t("close")}
-          </Link>
-        </div>
-      </ModalView>
-    );
-  }
-}
+  return (
+    <ModalView contentLabel={t("submission.list.title")} returnUrl={"/task/" + props.taskName}>
+      <div className="modal-header">
+        <h5 className="modal-title">
+          {t("submission.list.title")} <strong className="text-uppercase">{props.taskName}</strong>
+        </h5>
+        <Link to={"/task/" + props.taskName} role="button" className="close" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </Link>
+      </div>
+      <PromiseView
+        promise={getListPromise()}
+        renderPending={() => <div className="modal-body"><em>{t("loading")}</em></div>}
+        renderRejected={() => t("error")}
+        renderFulfilled={(list) => renderBody(list)}
+      />
+      <div className="modal-footer">
+        <Link to={"/task/" + props.taskName} role="button" className="btn btn-primary">
+          <FontAwesomeIcon icon={faTimes} /> {t("close")}
+        </Link>
+      </div>
+    </ModalView>
+  );
+};
+
+export default SubmissionListView;

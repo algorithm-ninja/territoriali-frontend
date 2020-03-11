@@ -18,7 +18,7 @@ type Props = {
 }
 
 const AdminView = (props: Props) => {
-  const [t] = useTranslation();
+  const [t] = useTranslation();  // TODO: namespace "admin" ?
 
   const [session, setSession] = React.useState<AdminSession>(new AdminSession());
 

@@ -12,7 +12,7 @@ type Props = RouteComponentProps<any>
 
 const AppView = (props: Props) => {
   const [t] = useTranslation();
-  const [model, useModel] = React.useState(new Model());
+  const [model, setModel] = React.useState(new Model());
 
   React.useEffect(() => {
     model.onAppStart();
