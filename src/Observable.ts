@@ -1,38 +1,56 @@
-type ForceUpdateable = { //React.ComponentType<RouteComponentProps<any>>
-  forceUpdate: () => void
-}
+type Listener<T> = (val: T) => void;
+type Unsubscriber = () => void;
 
-export default class Observable {
-  observers: ForceUpdateable[];
+// type ForceUpdateable = { //React.ComponentType<RouteComponentProps<any>>
+//   forceUpdate: () => void
+// }
 
-  constructor() {
-    this.observers = [];
+export default class Observable<T> {
+  private listeners: Listener<T>[] = [];
+
+  constructor(private value: T) {}
+
+  get(): T {
+    return this.value;
   }
 
-  pushObserver(o: ForceUpdateable) {
-    if (this.observers.indexOf(o) >= 0) throw new Error();
-    this.observers.push(o);
-  }
-
-  popObserver(o: ForceUpdateable) {
-    if (this.observers.indexOf(o) < 0) throw new Error();
-    this.observers.splice(this.observers.indexOf(o), 1);
-  }
-
-  fireUpdate() {
-    this.propagateUpdate();
-  }
-
-  propagateUpdate() {
-    const observers = [...this.observers];
-    for (let o of observers) {
-      o.forceUpdate();
+  set(value: T) {
+    if (this.value !== value) {
+      this.value = value;
     }
   }
 
-  // Delegate for chaining observers
-  forceUpdate() {
-    this.propagateUpdate();
+  subscribe(listener: Listener<T>): Unsubscriber {
+    this.listeners.push(listener);
+
+    return () => {
+      this.listeners = this.listeners.filter(l => l !== listener);
+    };
   }
 
+  // pushObserver(o: ForceUpdateable) {
+  //   if (this.observers.indexOf(o) >= 0) throw new Error();
+  //   this.observers.push(o);
+  // }
+
+  // popObserver(o: ForceUpdateable) {
+  //   if (this.observers.indexOf(o) < 0) throw new Error();
+  //   this.observers.splice(this.observers.indexOf(o), 1);
+  // }
+
+  // fireUpdate() {
+  //   this.propagateUpdate();
+  // }
+
+  // propagateUpdate() {
+  //   const observers = [...this.observers];
+  //   for (let o of observers) {
+  //     o.forceUpdate();
+  //   }
+  // }
+
+  // // Delegate for chaining observers
+  // forceUpdate() {
+  //   this.propagateUpdate();
+  // }
 }

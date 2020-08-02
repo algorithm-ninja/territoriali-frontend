@@ -16,7 +16,7 @@ type Props = {
 } & RouteComponentProps<any>
 
 const ContestExtraTimeView = (props: Props) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     props.session.pushObserver(this);

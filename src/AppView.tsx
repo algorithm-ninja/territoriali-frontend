@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 type Props = RouteComponentProps<any>
 
 const AppView = (props: Props) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
   const [model, setModel] = React.useState(new Model());
 
   React.useEffect(() => {

@@ -6,9 +6,9 @@ import ObservablePromise from './ObservablePromise';
 import { notifyError } from './utils';
 
 type AdminStatusData = {
-  extra_time: number
-  token?: string
-}
+  extra_time: number;
+  token?: string;
+};
 
 class AdminStatus {
   data: AdminStatusData;
@@ -18,26 +18,20 @@ class AdminStatus {
   }
 
   extraTimeMinutes() {
-    return Math.round(this.data.extra_time / 60)
+    return Math.round(this.data.extra_time / 60);
   }
 }
 
-export class AdminSession extends Observable {
+const COOKIE_NAME = "adminToken";
+
+class AdminSession extends Observable {
   usersPromise?: ObservablePromise;
-  statusPromise: any;
+  statusPromise: ObservablePromise;
   timeDelta: any;
-  cookies: any;
-
-  static cookieName = "adminToken";
-
-  constructor() {
-    super();
-
-    this.cookies = new Cookies();
-  }
+  cookies = new Cookies();
 
   adminToken() {
-    return this.cookies.get(AdminSession.cookieName);
+    return this.cookies.get(COOKIE_NAME);
   }
 
   isLoggedIn() {
@@ -81,13 +75,13 @@ export class AdminSession extends Observable {
 
   login(token: string) {
     if (this.isLoggedIn()) throw Error();
-    this.cookies.set(AdminSession.cookieName, token);
+    this.cookies.set(COOKIE_NAME, token);
     return this.updateStatus();
   }
 
   logout() {
     if (!this.isLoggedIn()) throw Error("logout() should be called only if logged in");
-    this.cookies.remove(AdminSession.cookieName);
+    this.cookies.remove(COOKIE_NAME);
     delete this.statusPromise;
     this.fireUpdate();
   }
@@ -121,5 +115,7 @@ export class AdminSession extends Observable {
   loadLogs(options: any) {
     return new ObservablePromise(client.adminApi(this.adminToken(), "/log", options).then((response: any) => response.data));
   }
-
 }
+
+const adminSession = new AdminSession();
+export default adminSession;

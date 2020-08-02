@@ -1,27 +1,26 @@
 import * as React from 'react';
-import { AdminSession } from './admin.models';
+import adminSession from './admin.models';
 import { useTranslation } from 'react-i18next';
 const ReactMarkdown = require('react-markdown');
 
 type Props = {
-  session: AdminSession
   pack: { data: { deletable: boolean, name: string, description: string } }
 };
 
 const AdminLoginView = (props: Props) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
-    this.props.session.pushObserver(this);
+    adminSession.pushObserver(this);
 
     return () => {
-      this.props.session.popObserver(this);
+      adminSession.popObserver(this);
     };
   });
 
   const login = () => {
     const token = (refs.form as any).token.value
-    props.session.login(token);
+    adminSession.login(token);
   }
 
   return (

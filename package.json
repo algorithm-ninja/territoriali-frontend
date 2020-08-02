@@ -15,6 +15,7 @@
     "@types/react-dom": "^16.0.5",
     "@types/react-fontawesome": "^1.6.2",
     "@types/react-modal": "^3.1.2",
+    "@types/react-redux": "^7.1.7",
     "@types/react-router-dom": "^4.2.6",
     "@types/react-tooltip": "^3.3.4",
     "axios": "^0.18.0",
@@ -33,13 +34,14 @@
     "react-i18next": "^10.0.0",
     "react-markdown": "^4.0.6",
     "react-modal": "^3.4.1",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "^3.4.0",
     "react-scripts-ts": "^3.1.0",
     "react-toastify": "^4.0.0-rc.4",
     "react-tooltip": "^3.5.0",
     "typescript": "3.7",
-    "universal-cookie": "^2.1.2"
+    "universal-cookie": "^4.0.3"
   },
   "scripts": {
     "start": "concurrently --kill-others \"react-scripts-ts start\" \"node proxy.js\"",

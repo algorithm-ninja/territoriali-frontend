@@ -13,7 +13,7 @@ type UserExtraTimeProps = {
 }
 
 const UserExtraTimeView = (props: UserExtraTimeProps) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
   
   const setExtraTime = () => {
     if (!window.confirm(t("confirmation"))) return;
@@ -45,7 +45,7 @@ type AdminUsersProps = {
 };
 
 const AdminUsersView = (props: AdminUsersProps) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     props.session.pushObserver(this);

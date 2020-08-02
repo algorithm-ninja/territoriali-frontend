@@ -10,7 +10,7 @@ type Props = {
 } & RouteComponentProps<any>;
 
 const CreateSubmissionView = (props: Props) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
   const [submission, setSubmission] = React.useState();
 
   React.useEffect(() => {

@@ -59,7 +59,7 @@ type CountDownProps = {
 const tickRate = 1000;
 
 export const CountdownView = (props: CountDownProps) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
   const [ticker, setTicker] = React.useState(0);
 
   React.useEffect(() => {

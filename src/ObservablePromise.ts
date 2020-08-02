@@ -1,44 +1,43 @@
 import Observable from './Observable';
 
-export default class ObservablePromise extends Observable {
-  delegate: Promise<any>;
-  state: string;
-  value: any;
-  error: any;
+export default class ObservablePromise<T> extends Observable<{
+  result: T | null;
+  error: unknown;
+}> {
+  private state: 'pending' | 'fulfilled' | 'rejected';
 
-  constructor(delegate: Promise<any>) {
-    super();
+  constructor(promise: Promise<T>) {
+    super({
+      result: null,
+      error: null
+    });
 
-    this.delegate = delegate;
+    this.state = 'pending';
 
-    if (!delegate.then) throw new Error("ObservablePromise was not provided with a valid promise");
-
-    this.state = "pending";
-
-    this.value = null;
-    this.error = null;
-
-    delegate.then((value) => {
-      this.state = "fulfilled";
-      this.value = value;
-      this.fireUpdate();
+    promise.then((result) => {
+      this.state = 'fulfilled';
+      this.set({
+        result: result,
+        error: null
+      });
     }, (error) => {
-      this.state = "rejected";
-      this.error = error;
-      this.fireUpdate();
+      this.state = 'rejected';
+      this.set({
+        result: null,
+        error: error,
+      });
     });
   }
 
   isPending() {
-    return this.state === "pending";
+    return this.state === 'pending';
   }
 
   isFulfilled() {
-    return this.state === "fulfilled";
+    return this.state === 'fulfilled';
   }
 
   isRejected() {
-    return this.state === "rejected";
+    return this.state === 'rejected';
   }
-
 }

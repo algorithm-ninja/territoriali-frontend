@@ -5,6 +5,7 @@ import 'babel-polyfill';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+
 import AppView from './AppView';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -29,7 +30,7 @@ window.addEventListener('unhandledrejection', (event: any) => {
 });
 
 ReactDOM.render(
-    <React.Fragment>
+    <>
         <ToastContainer />
         <Router>
             <Switch>
@@ -37,6 +38,6 @@ ReactDOM.render(
                 <Route component={AppView} />
             </Switch>
         </Router>
-    </React.Fragment>,
+    </>,
     document.getElementById("root")
 );

@@ -20,7 +20,7 @@ const DETECT_INTERNET_TEST_ENDPOINT = process.env.REACT_APP_DETECT_INTERNET_TEST
 const DETECT_INTERNET_TEST_CONTENT = process.env.REACT_APP_DETECT_INTERNET_TEST_CONTENT || null;
 
 const ContestView = (props: Props) => {
-  const [t] = useTranslation();
+  const { t } = useTranslation();
   const [detectInternetInterval, setDetectInternetInterval] = React.useState<NodeJS.Timer | null>(null);
 
   const detectInternet = async (endpoint: string) => {

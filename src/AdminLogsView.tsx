@@ -53,7 +53,7 @@ const AdminLogsView = (props: Props) => {
   const [level, setLevel] = React.useState('INFO');
   const [category, setCategory] = React.useState('');
   const [filter, setFilter] = React.useState('');
-  const [t] = useTranslation();
+  const { t } = useTranslation();
 
   React.useEffect(() => {
     loadLogs();
